@@ -1,84 +1,98 @@
-import React, { useState, useEffect } from "react";
-import styles from "./SettingsModal.module.css";
-import ModelSelector from "./ModelSelector";
-import { useTranslation } from "react-i18next";
-
+import React from 'react';
+import ModelSelector from './ModelSelector';
 interface SettingsModalProps {
-  open: boolean;
-  onClose: () => void;
-  apiKey: string;
-  onApiKeyChange: (key: string) => void;
-  selectedModel: string;
-  onModelChange: (model: string) => void;
-  theme: string;
-  onThemeChange: (theme: string) => void;
-}
-
-const SettingsModal: React.FC<SettingsModalProps> = ({
-  open,
-  onClose,
-  apiKey,
-  onApiKeyChange,
-  selectedModel,
-  onModelChange,
-  theme,
-  onThemeChange,
-}) => {
-  const { t } = useTranslation();
-  const [key, setKey] = useState(apiKey);
-
-  useEffect(() => setKey(apiKey), [apiKey, open]);
-
-  if (!open) return null;
-
-  const handleSave = () => {
-    onApiKeyChange(key.trim());
-    onClose();
-  };
-
-  return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <h2>{t("settings_title")}</h2>
-        <label className={styles.label}>
-          {t("api_key_label")}
-          <input
-            className={styles.input}
-            type="password"
-            value={key}
-            onChange={e => setKey(e.target.value)}
-            placeholder={t("api_key_placeholder")}
-            autoComplete="off"
-            spellCheck={false}
-            autoFocus
-          />
-          <small className={styles.desc}>{t("api_key_description")}</small>
-        </label>
-
-        <ModelSelector value={selectedModel} onChange={onModelChange} />
-
-        <label className={styles.label}>
-          {t("theme_label")}
-          <select
-            className={styles.input}
-            value={theme}
-            onChange={e => onThemeChange(e.target.value)}
-          >
-            <option value="system">{t("theme_system")}</option>
-            <option value="dark">{t("theme_dark")}</option>
-            <option value="light">{t("theme_light")}</option>
-          </select>
-        </label>
-
-        <div className={styles.footer}>
-          <button className={styles.saveBtn} onClick={handleSave}>
-            {t("save_button")}
-          </button>
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
-        </div>
-      </div>
-    </div>
-  );
+isOpen: boolean;
+onClose: () => void;
+settings: {
+apiKey: string;
+model: string;
+endpoint?: string;
 };
-
+onSave: (settings: { apiKey: string; model: string; endpoint?: string }) => void;
+}
+const SettingsModal: React.FC<SettingsModalProps> = ({
+isOpen,
+onClose,
+settings,
+onSave
+}) => {
+const [apiKey, setApiKey] = React.useState(settings.apiKey);
+const [model, setModel] = React.useState(settings.model);
+const [endpoint, setEndpoint] = React.useState(settings.endpoint || '');
+if (!isOpen) return null;
+const handleSubmit = (e: React.FormEvent) => {
+e.preventDefault();
+onSave({
+apiKey,
+model,
+endpoint: model === 'local/ollama' ? endpoint : undefined
+});
+onClose();
+};
+const isApiKeyRequired = !model.includes('local/');
+return (
+<div className="settings-modal">
+<div className="settings-content">
+<div className="settings-header">
+<h2>Einstellungen</h2>
+<button onClick={onClose} style={{ background: 'transparent', color: 'var(--text-color)' }}>✕</button>
+</div>
+    <form onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label htmlFor="model">Modell</label>
+        <ModelSelector 
+          value={model}
+          onChange={setModel}
+        />
+      </div>
+      
+      <div className="form-group">
+        <label htmlFor="apiKey">
+          API Key {model.startsWith('openrouter/') ? '(OpenRouter)' : model === 'local/ollama' ? '(Optional)' : ''}
+        </label>
+        <input
+          type="password"
+          id="apiKey"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder={model.startsWith('openrouter/') ? 'sk-or-...' : 'API Key'}
+          disabled={model === 'local/ollama'}
+        />
+        {model.startsWith('openrouter/') && (
+          <div style={{ fontSize: '12px', marginTop: '4px' }}>
+            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-color)' }}>
+              OpenRouter API Key erstellen
+            </a>
+          </div>
+        )}
+      </div>
+      
+      {model === 'local/ollama' && (
+        <div className="form-group">
+          <label htmlFor="endpoint">Ollama Endpoint & Modell</label>
+          <input
+            type="text"
+            id="endpoint"
+            value={endpoint}
+            onChange={(e) => setEndpoint(e.target.value)}
+            placeholder="http://localhost:11434/api/chat"
+          />
+          <div style={{ fontSize: '12px', marginTop: '4px', opacity: 0.7 }}>
+            Beispiel für lokal installiertes Ollama
+          </div>
+        </div>
+      )}
+      
+      <button 
+        type="submit" 
+        style={{ width: '100%', marginTop: '16px' }}
+        disabled={isApiKeyRequired && !apiKey}
+      >
+        Speichern
+      </button>
+    </form>
+  </div>
+</div>
+);
+};
 export default SettingsModal;

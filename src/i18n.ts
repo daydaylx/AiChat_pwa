@@ -1,29 +1,30 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
-
-import translationDE from './locales/de.json';
-import translationEN from './locales/en.json';
-
-const resources = {
-  de: { translation: translationDE.translation },
-  en: { translation: translationEN.translation }
+// Minimalist i18n replacement - keine Mehrsprachigkeit
+export const t = (key: string): string => {
+const translations: Record<string, string> = {
+'settings.title': 'Einstellungen',
+'settings.model': 'Modell',
+'settings.apiKey': 'API Key',
+'settings.save': 'Speichern',
+'chat.placeholder': 'Nachricht eingeben...',
+'chat.send': 'Senden',
+'chat.empty': 'Keine Nachrichten. Starte eine Unterhaltung!',
+'chat.typing': 'AI schreibt...',
+'chat.clear': 'Chat löschen',
+'error.api': 'Fehler beim Senden der Nachricht. Bitte überprüfe deine API-Einstellungen.'
 };
-
-i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources,
-    fallbackLng: 'de',
-    supportedLngs: ['de', 'en'],
-    interpolation: {
-      escapeValue: false
-    },
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage']
-    }
-  });
-
-export default i18n;
+return translations[key] || key;
+};
+// Dummy-Funktionen für Kompatibilität
+export const useTranslation = () => {
+return {
+t,
+i18n: {
+changeLanguage: () => Promise.resolve(),
+language: 'de'
+}
+};
+};
+export default {
+t,
+useTranslation
+};
