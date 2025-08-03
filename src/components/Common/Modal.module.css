@@ -1,31 +1,47 @@
-.modalBackdrop {
+.overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(28, 24, 34, 0.85);
-  z-index: 99;
+  inset: 0;
+  background: rgba(18, 24, 40, 0.85);
+  z-index: 100;
   display: flex;
-  justify-content: center;
   align-items: center;
-  animation: modalFadeIn 0.18s ease;
+  justify-content: center;
 }
 
-@keyframes modalFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.modal {
+  background: var(--primary-800, #24243a);
+  color: #f3f8fc;
+  border-radius: 1.5em;
+  min-width: 300px;
+  max-width: 96vw;
+  padding: 1.4em 2em 1.2em 2em;
+  box-shadow: 0 4px 48px #13224044;
+  position: relative;
+  animation: modal-pop .17s cubic-bezier(.62,1.5,.34,1.12);
 }
 
-.modalBox {
-  background: linear-gradient(115deg, #241c33 70%, #353b5a 100%);
-  border-radius: 21px;
-  box-shadow: 0 7px 44px #18142977;
-  padding: 38px 33px 27px 33px;
-  max-width: 98vw;
-  min-width: 310px;
-  color: #edeaff;
-  animation: boxPopIn 0.16s cubic-bezier(.39,.72,.48,1.34);
+@keyframes modal-pop {
+  0% { transform: scale(0.92) translateY(20px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
-@keyframes boxPopIn {
-  from { transform: translateY(20px) scale(.96); opacity: 0.6;}
-  to   { transform: translateY(0) scale(1); opacity: 1;}
+.closeBtn {
+  position: absolute;
+  top: 1em;
+  right: 1.2em;
+  background: none;
+  border: none;
+  color: #92cefc;
+  font-size: 1.2em;
+  border-radius: 0.7em;
+  padding: 0.1em 0.5em;
+  cursor: pointer;
+  transition: background 0.11s, color 0.12s;
+}
+
+.closeBtn:hover,
+.closeBtn:focus {
+  background: #122438;
+  color: #fff;
+  outline: none;
 }

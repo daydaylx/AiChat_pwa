@@ -3,24 +3,24 @@ import styles from "./Header.module.css";
 import { useTranslation } from "react-i18next";
 
 interface HeaderProps {
-  onOpenSettings: () => void;
+  onMenuClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onOpenSettings }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { t } = useTranslation();
 
   return (
     <header className={styles.header}>
-      <div className={styles.logoBox}>
-        <span className={styles.logo}>🤖</span>
-        <span className={styles.title}>{t("app_title")}</span>
-      </div>
-      <button className={styles.settingsButton} onClick={onOpenSettings} title={t("settings_title")}>
-        <svg width="24" height="24" fill="none" stroke="currentColor">
-          <circle cx="12" cy="12" r="10" strokeWidth="2"/>
-          <path d="M12 8v4l3 3" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
+      <button
+        className={styles.menuBtn}
+        aria-label="Open Menu"
+        onClick={onMenuClick}
+        tabIndex={0}
+      >
+        <span className={styles.menuIcon}></span>
       </button>
+      <span className={styles.title}>{t("app_title")}</span>
+      <div className={styles.headerSpacer} />
     </header>
   );
 };

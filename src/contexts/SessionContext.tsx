@@ -1,70 +1,74 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
-import { db, getAllSessions, saveSession, deleteSession } from '../services/db';
-import type { ChatSession, Message } from '../types';
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { ChatSession, Message } from "../types";
+import { getAllSessions, saveSession, deleteSession, deleteAllSessions } from "../services/db";
+import { v4 as uuidv4 } from "../utils/uuid";
 
-interface SessionContextType {
+interface SessionContextProps {
   sessions: ChatSession[];
-  activeSessionId: string | null;
-  setActiveSessionId: (id: string | null) => void;
-  activeSession: ChatSession | null;
-  newSession: () => void;
-  deleteSession: (id: string) => void;
-  addMessage: (msg: Message) => void;
+  currentSessionId: string | null;
+  setCurrentSessionId: (id: string) => void;
+  addSession: (session?: Partial<ChatSession>) => void;
+  updateSession: (session: ChatSession) => void;
+  removeSession: (id: string) => void;
+  clearSessions: () => void;
 }
 
-export const SessionContext = createContext<SessionContextType | undefined>(undefined);
+const SessionContext = createContext<SessionContextProps | undefined>(undefined);
 
-export function SessionProvider({ children }: { children: ReactNode }) {
+export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
   useEffect(() => {
-    getAllSessions().then(list => {
-      setSessions(list);
-      if (list.length && !activeSessionId) setActiveSessionId(list[0].id);
-    });
+    getAllSessions().then(setSessions);
   }, []);
 
-  const activeSession = sessions.find(s => s.id === activeSessionId) || null;
-
-  const newSession = () => {
-    const newS: ChatSession = {
-      id: crypto.randomUUID(),
-      title: 'Neuer Chat',
-      avatar: '💬',
-      model: '',
-      messages: [],
+  const addSession = (partial?: Partial<ChatSession>) => {
+    const id = uuidv4();
+    const session: ChatSession = {
+      id,
+      title: partial?.title || "",
       createdAt: Date.now(),
+      messages: partial?.messages || [],
+      model: partial?.model || "",
     };
-    setSessions(prev => [newS, ...prev]);
-    setActiveSessionId(newS.id);
-    saveSession(newS);
+    saveSession(session).then(() => getAllSessions().then(setSessions));
+    setCurrentSessionId(id);
   };
 
-  const deleteS = (id: string) => {
-    setSessions(prev => prev.filter(s => s.id !== id));
-    if (activeSessionId === id) setActiveSessionId(null);
-    deleteSession(id);
+  const updateSession = (session: ChatSession) => {
+    saveSession(session).then(() => getAllSessions().then(setSessions));
   };
 
-  const addMessage = (msg: Message) => {
-    if (!activeSession) return;
-    const updatedSession = { ...activeSession, messages: [...activeSession.messages, msg] };
-    setSessions(prev => prev.map(s => s.id === updatedSession.id ? updatedSession : s));
-    saveSession(updatedSession);
+  const removeSession = (id: string) => {
+    deleteSession(id).then(() => getAllSessions().then(setSessions));
+    if (currentSessionId === id) setCurrentSessionId(null);
+  };
+
+  const clearSessions = () => {
+    deleteAllSessions().then(() => getAllSessions().then(setSessions));
+    setCurrentSessionId(null);
   };
 
   return (
-    <SessionContext.Provider value={{
-      sessions,
-      activeSessionId,
-      setActiveSessionId,
-      activeSession,
-      newSession,
-      deleteSession: deleteS,
-      addMessage,
-    }}>
+    <SessionContext.Provider
+      value={{
+        sessions,
+        currentSessionId,
+        setCurrentSessionId,
+        addSession,
+        updateSession,
+        removeSession,
+        clearSessions,
+      }}
+    >
       {children}
     </SessionContext.Provider>
   );
+};
+
+export function useSession() {
+  const ctx = useContext(SessionContext);
+  if (!ctx) throw new Error("useSession must be used within SessionProvider");
+  return ctx;
 }
