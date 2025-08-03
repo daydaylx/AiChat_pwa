@@ -1,15 +1,14 @@
 export interface Message {
-  id: string;
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
-  createdAt: number;
 }
 
 export interface ChatSession {
   id: string;
   title: string;
-  createdAt: number;
-  updatedAt: number;
-  messages: Message[];
+  createdAt: number;   // UNIX timestamp (ms)
+  updatedAt: number;   // UNIX timestamp (ms)
   model: string;
+  messages: Message[];
+  avatar?: string;
 }

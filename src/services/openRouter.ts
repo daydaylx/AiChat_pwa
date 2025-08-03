@@ -1,68 +1,43 @@
-import { Message } from "../types";
+const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
-const API_URL = 'https://openrouter.ai/api/v1/chat/completions'\;
-
-/**
- * Streamt die KI-Antwort von der OpenRouter-API.
- * Gibt einen asynchronen Generator zurück, der Text-Chunks liefert.
- */
-export async function* streamOpenRouterResponse(
-  messages: Message[],
-  apiKey: string,
-  modelId: string
-): AsyncGenerator<string, void, undefined> {
-
-  const apiMessages = messages.map(({ role, content }) => ({ role, content }));
-
+export async function fetchChatCompletion(apiKey: string, model: string, messages: any[], maxTokens = 2048) {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
+      'HTTP-Referer': window.location.origin,
+      'X-Title': 'ki-chat-pwa-nofilter'
     },
     body: JSON.stringify({
-      model: modelId,
-      messages: apiMessages,
-      stream: true,
-    }),
+      model,
+      messages,
+      max_tokens: maxTokens,
+      stream: false
+    })
   });
 
   if (!response.ok) {
-    let errorMsg = '';
-    try {
-      const errorBody = await response.json();
-      errorMsg = errorBody?.error?.message || JSON.stringify(errorBody);
-    } catch {
-      errorMsg = `API request failed with status ${response.status}`;
-    }
-    throw new Error(errorMsg);
+    throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
   }
-
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error('Failed to get response reader');
-
-  const decoder = new TextDecoder();
-  let buffer = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || '';
-
-    for (const line of lines) {
-      if (line.startsWith('data: ')) {
-        const jsonString = line.slice(6);
-        if (jsonString === '[DONE]') return;
-        try {
-          const parsed = JSON.parse(jsonString);
-          const content = parsed.choices[0]?.delta?.content;
-          if (content) yield content;
-        } catch (e) {
-          // Ignoriere fehlerhafte Chunks
-        }
-      }
-    }
-  }
+  const data = await response.json();
+  return data;
 }
+
+export async function fetchModels(apiKey: string) {
+  const res = await fetch('https://openrouter.ai/api/v1/models', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': window.location.origin,
+      'X-Title': 'ki-chat-pwa-nofilter'
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch models: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
+}
+

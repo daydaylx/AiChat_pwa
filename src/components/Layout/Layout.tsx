@@ -1,16 +1,16 @@
-import React from "react";
-import Header from "./Header";
+import React, { ReactNode } from 'react';
+import styles from './Layout.module.css';
 
-type LayoutProps = {
-  children: React.ReactNode;
+export interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  return (
+    <div className={styles.layout}>
+      {children}
+    </div>
+  );
 };
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => (
-  <div className="layout-root">
-    <Header />
-    <main>{children}</main>
-  </div>
-);
-
 export default Layout;
-

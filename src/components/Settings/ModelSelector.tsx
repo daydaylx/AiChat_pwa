@@ -1,34 +1,20 @@
-import React from "react";
-import styles from "./ModelSelector.module.css";
-import { useTranslation } from "react-i18next";
-import { getAvailableModels, getModelInfo } from "../../utils/models";
+import React from 'react';
+import { AVAILABLE_MODELS } from "../../utils/models";
 
-interface Props {
+interface ModelSelectorProps {
   value: string;
-  onChange: (modelId: string) => void;
+  onChange: (model: string) => void;
 }
 
-const ModelSelector: React.FC<Props> = ({ value, onChange }) => {
-  const { t } = useTranslation();
-  const models = getAvailableModels();
-
+const ModelSelector: React.FC<ModelSelectorProps> = ({ value, onChange }) => {
   return (
-    <div className={styles.root}>
-      <label className={styles.label}>{t("model_selection_label")}</label>
-      <select
-        className={styles.select}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-      >
-        {models.map(m => (
-          <option key={m.id} value={m.id}>{m.label}</option>
-        ))}
-      </select>
-      <div className={styles.info}>
-        <strong>{t("model_info_title")}: </strong>
-        {getModelInfo(value, t)}
-      </div>
-    </div>
+    <select value={value} onChange={e => onChange(e.target.value)}>
+      {AVAILABLE_MODELS.map((m) => (
+        <option key={m.id} value={m.id}>
+          {m.label}
+        </option>
+      ))}
+    </select>
   );
 };
 

@@ -1,104 +1,54 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { AVAILABLE_MODELS } from '../utils/models';
+import { uuidv4 } from '../utils/uuid';
 import { ChatSession, Message } from '../types';
-import { uuidv4 } from '../utils/uuid';  // Changed: direct function import
-import db from '../utils/db';
+import * as db from '../utils/db';
 
 interface SessionContextType {
   sessions: ChatSession[];
   currentSession: ChatSession | null;
-  createSession: (title: string) => void;
-  selectSession: (id: string) => void;
-  deleteSession: (id: string) => void;
-  addMessage: (message: Message) => void;
-  updateSessionTitle: (id: string, title: string) => void;
+  setCurrentSession: React.Dispatch<React.SetStateAction<ChatSession | null>>;
+  setSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>;
+  saveSession: (session: ChatSession) => Promise<void>;
+  loadSessions: () => Promise<void>;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
-export function SessionProvider({ children }: { children: ReactNode }) {
+export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
 
   useEffect(() => {
     loadSessions();
+    // eslint-disable-next-line
   }, []);
 
   const loadSessions = async () => {
-    const allSessions = await db.getAllSessions();
+    const allSessions = await db.getSessions();
     setSessions(allSessions);
-  };
-
-  const createSession = async (title: string) => {
-    const newSession: ChatSession = {
-      id: uuidv4(),
-      title,
-      messages: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    
-    await db.saveSession(newSession);
-    setSessions(prev => [newSession, ...prev]);
-    setCurrentSession(newSession);
-  };
-
-  const selectSession = async (id: string) => {
-    const session = await db.getSession(id);
-    setCurrentSession(session);
-  };
-
-  const deleteSession = async (id: string) => {
-    await db.deleteSession(id);
-    setSessions(prev => prev.filter(s => s.id !== id));
-    if (currentSession?.id === id) {
-      setCurrentSession(null);
+    if (allSessions.length > 0) {
+      setCurrentSession(allSessions[0]);
     }
   };
 
-  const addMessage = async (message: Message) => {
-    if (!currentSession) return;
-    
-    await db.addMessage(currentSession.id, message);
-    setCurrentSession(prev => prev ? {
-      ...prev,
-      messages: [...prev.messages, message],
-      updatedAt: new Date()
-    } : null);
-    
-    loadSessions(); // Refresh sessions list
-  };
-
-  const updateSessionTitle = async (id: string, title: string) => {
-    const session = await db.getSession(id);
-    if (session) {
-      const updatedSession = { ...session, title, updatedAt: new Date() };
-      await db.saveSession(updatedSession);
-      setSessions(prev => prev.map(s => s.id === id ? updatedSession : s));
-      if (currentSession?.id === id) {
-        setCurrentSession(updatedSession);
-      }
-    }
+  const saveSession = async (session: ChatSession) => {
+    // updatedAt MUSS number sein (Timestamp), kein Date-Objekt!
+    const updatedSession = { ...session, updatedAt: Date.now() };
+    await db.saveSession(updatedSession);
+    setSessions(prev => prev.map(s => s.id === session.id ? updatedSession : s));
+    setCurrentSession(updatedSession);
   };
 
   return (
-    <SessionContext.Provider value={{
-      sessions,
-      currentSession,
-      createSession,
-      selectSession,
-      deleteSession,
-      addMessage,
-      updateSessionTitle,
-    }}>
+    <SessionContext.Provider value={{ sessions, currentSession, setCurrentSession, setSessions, saveSession, loadSessions }}>
       {children}
     </SessionContext.Provider>
   );
-}
+};
 
-export function useSession() {
-  const context = useContext(SessionContext);
-  if (context === undefined) {
-    throw new Error('useSession must be used within a SessionProvider');
-  }
-  return context;
+export function useSessionContext() {
+  const ctx = useContext(SessionContext);
+  if (!ctx) throw new Error('useSessionContext must be used within a SessionProvider');
+  return ctx;
 }

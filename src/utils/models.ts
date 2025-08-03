@@ -1,44 +1,37 @@
-export interface ModelInfo {
-  id: string;
-  openrouterId: string;
-  name: string;
-  description: string;
-  maxTokens: number;
-  nsfw: boolean;
-}
-
-export const AVAILABLE_MODELS: ModelInfo[] = [
+export const AVAILABLE_MODELS = [
   {
-    id: 'venice-uncensored',
-    openrouterId: 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free',
-    name: 'Venice Uncensored',
-    description: 'Unzensiertes Modell (Dolphin Mixtral Venice), uneingeschränkt NSFW, keine Guardrails.',
-    maxTokens: 32768,
-    nsfw: true
+    id: "panda-llama-3",
+    label: "Panda Llama-3 (Free/No Filter)",
+    description: "Sehr wenig Moderation, kostenlos. Für experimentelle ungefilterte Anfragen.",
+    free: true
   },
   {
-    id: 'deepseek-v3-free',
-    openrouterId: 'deepseek-ai/deepseek-v3:free',
-    name: 'DeepSeek V3 (Free)',
-    description: 'Hochwertiges, weitgehend ungefiltertes Modell, NSFW-Content erlaubt.',
-    maxTokens: 8192,
-    nsfw: true
+    id: "neural-chat-7b",
+    label: "Neural Chat 7B (Free/Minimal Filter)",
+    description: "Kostenlos, schwacher Filter, moderate Intelligenz.",
+    free: true
   },
   {
-    id: 'nemo-celeste',
-    openrouterId: 'nothingiisreal/mn-celeste-12b:free',
-    name: 'Mistral Nemo 12B Celeste (Uncensored)',
-    description: 'Speziell für explizite Inhalte und freie Kommunikation entwickelt, NSFW möglich.',
-    maxTokens: 8192,
-    nsfw: true
+    id: "openhermes-2-mistral",
+    label: "OpenHermes 2 Mistral (Free/Loose Guardrails)",
+    description: "Kaum Zensur, kostenlos, robust.",
+    free: true
+  },
+  {
+    id: "dolphin-mixtral",
+    label: "Dolphin Mixtral (Free/Moderate Filter)",
+    description: "Beworben als uncensored, aber Backend kann filtern.",
+    free: true
+  },
+  {
+    id: "nous-hermes-2-mixtral",
+    label: "Nous Hermes 2 Mixtral (Free/Less Moderation)",
+    description: "Kostenlos, kaum Filter, trotzdem TOS beachten.",
+    free: true
   }
 ];
 
-export function getDefaultModel(): string {
-  // Venice meist am beliebtesten – bei Bedarf einfach anpassen
-  return 'venice-uncensored';
-}
-
-export function getModelInfo(modelId: string): ModelInfo | undefined {
-  return AVAILABLE_MODELS.find(model => model.id === modelId);
+// Hilfsfunktion, falls benötigt:
+export function getModelInfo(id: string) {
+  return AVAILABLE_MODELS.find(m => m.id === id);
 }
