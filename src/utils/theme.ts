@@ -1,37 +1,16 @@
-/**
- * Theme-Helfer zum Umschalten zwischen Dark, Light und System-Design.
- */
-
-const THEME_KEY = 'app_theme';
-
-export type Theme = 'light' | 'dark' | 'system';
-
-/**
- * Holt das aktuelle Theme aus dem lokalen Speicher oder verwendet 'system'.
- */
-export function getStoredTheme(): Theme {
-  const theme = localStorage.getItem(THEME_KEY);
-  return theme === 'light' || theme === 'dark' ? theme : 'system';
+export function getStoredTheme(): string {
+  return localStorage.getItem('theme') || 'light';
 }
 
-/**
- * Speichert das gewählte Theme im lokalen Speicher.
- */
-export function storeTheme(theme: Theme) {
-  localStorage.setItem(THEME_KEY, theme);
+export function applyTheme(theme: string): void {
+  document.documentElement.setAttribute('data-theme', theme);
 }
 
-/**
- * Wendet das übergebene Theme auf das HTML-Root-Element an.
- */
-export function applyTheme(theme: Theme) {
-  const root = document.documentElement;
-  const resolved =
-    theme === 'system'
-      ? window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light'
-      : theme;
+export function getTheme(): string {
+  return localStorage.getItem('theme') || 'light';
+}
 
-  root.dataset.theme = resolved;
+export function setTheme(theme: string): void {
+  localStorage.setItem('theme', theme);
+  applyTheme(theme);
 }

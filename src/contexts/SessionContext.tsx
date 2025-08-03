@@ -1,74 +1,104 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { ChatSession, Message } from "../types";
-import { getAllSessions, saveSession, deleteSession, deleteAllSessions } from "../services/db";
-import { v4 as uuidv4 } from "../utils/uuid";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { ChatSession, Message } from '../types';
+import { uuidv4 } from '../utils/uuid';  // Changed: direct function import
+import db from '../utils/db';
 
-interface SessionContextProps {
+interface SessionContextType {
   sessions: ChatSession[];
-  currentSessionId: string | null;
-  setCurrentSessionId: (id: string) => void;
-  addSession: (session?: Partial<ChatSession>) => void;
-  updateSession: (session: ChatSession) => void;
-  removeSession: (id: string) => void;
-  clearSessions: () => void;
+  currentSession: ChatSession | null;
+  createSession: (title: string) => void;
+  selectSession: (id: string) => void;
+  deleteSession: (id: string) => void;
+  addMessage: (message: Message) => void;
+  updateSessionTitle: (id: string, title: string) => void;
 }
 
-const SessionContext = createContext<SessionContextProps | undefined>(undefined);
+const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
-export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
-  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
 
   useEffect(() => {
-    getAllSessions().then(setSessions);
+    loadSessions();
   }, []);
 
-  const addSession = (partial?: Partial<ChatSession>) => {
-    const id = uuidv4();
-    const session: ChatSession = {
-      id,
-      title: partial?.title || "",
-      createdAt: Date.now(),
-      messages: partial?.messages || [],
-      model: partial?.model || "",
+  const loadSessions = async () => {
+    const allSessions = await db.getAllSessions();
+    setSessions(allSessions);
+  };
+
+  const createSession = async (title: string) => {
+    const newSession: ChatSession = {
+      id: uuidv4(),
+      title,
+      messages: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
-    saveSession(session).then(() => getAllSessions().then(setSessions));
-    setCurrentSessionId(id);
+    
+    await db.saveSession(newSession);
+    setSessions(prev => [newSession, ...prev]);
+    setCurrentSession(newSession);
   };
 
-  const updateSession = (session: ChatSession) => {
-    saveSession(session).then(() => getAllSessions().then(setSessions));
+  const selectSession = async (id: string) => {
+    const session = await db.getSession(id);
+    setCurrentSession(session);
   };
 
-  const removeSession = (id: string) => {
-    deleteSession(id).then(() => getAllSessions().then(setSessions));
-    if (currentSessionId === id) setCurrentSessionId(null);
+  const deleteSession = async (id: string) => {
+    await db.deleteSession(id);
+    setSessions(prev => prev.filter(s => s.id !== id));
+    if (currentSession?.id === id) {
+      setCurrentSession(null);
+    }
   };
 
-  const clearSessions = () => {
-    deleteAllSessions().then(() => getAllSessions().then(setSessions));
-    setCurrentSessionId(null);
+  const addMessage = async (message: Message) => {
+    if (!currentSession) return;
+    
+    await db.addMessage(currentSession.id, message);
+    setCurrentSession(prev => prev ? {
+      ...prev,
+      messages: [...prev.messages, message],
+      updatedAt: new Date()
+    } : null);
+    
+    loadSessions(); // Refresh sessions list
+  };
+
+  const updateSessionTitle = async (id: string, title: string) => {
+    const session = await db.getSession(id);
+    if (session) {
+      const updatedSession = { ...session, title, updatedAt: new Date() };
+      await db.saveSession(updatedSession);
+      setSessions(prev => prev.map(s => s.id === id ? updatedSession : s));
+      if (currentSession?.id === id) {
+        setCurrentSession(updatedSession);
+      }
+    }
   };
 
   return (
-    <SessionContext.Provider
-      value={{
-        sessions,
-        currentSessionId,
-        setCurrentSessionId,
-        addSession,
-        updateSession,
-        removeSession,
-        clearSessions,
-      }}
-    >
+    <SessionContext.Provider value={{
+      sessions,
+      currentSession,
+      createSession,
+      selectSession,
+      deleteSession,
+      addMessage,
+      updateSessionTitle,
+    }}>
       {children}
     </SessionContext.Provider>
   );
-};
+}
 
 export function useSession() {
-  const ctx = useContext(SessionContext);
-  if (!ctx) throw new Error("useSession must be used within SessionProvider");
-  return ctx;
+  const context = useContext(SessionContext);
+  if (context === undefined) {
+    throw new Error('useSession must be used within a SessionProvider');
+  }
+  return context;
 }

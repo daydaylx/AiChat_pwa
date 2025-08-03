@@ -1,25 +1,50 @@
 import { ChatSession } from '../types';
-import { db } from '../services/db';
+import db from './db';
 
-/**
- * Exportiert alle Chat-Sessions als JSON-Blob.
- */
-export async function exportAllChats(): Promise<Blob> {
-  const sessions = await db.getAllSessions();
-  const json = JSON.stringify(sessions, null, 2);
-  return new Blob([json], { type: 'application/json' });
+export interface ExportData {
+  version: string;
+  exportDate: string;
+  sessions: ChatSession[];
 }
 
-/**
- * Importiert mehrere Chat-Sessions aus einem JSON-File.
- */
-export async function importChatsFromFile(file: File): Promise<void> {
-  const text = await file.text();
-  const sessions: ChatSession[] = JSON.parse(text);
+export async function exportSessions(): Promise<string> {
+  const sessions = await db.getAllSessions();
+  const exportData: ExportData = {
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    sessions: sessions
+  };
+  
+  return JSON.stringify(exportData, null, 2);
+}
 
-  if (!Array.isArray(sessions)) throw new Error('Invalid format');
-  for (const session of sessions) {
-    if (!session.id || !session.messages) continue;
-    await db.saveSession(session);
+export async function importSessions(jsonData: string): Promise<void> {
+  try {
+    const importData: ExportData = JSON.parse(jsonData);
+    
+    if (!importData.sessions || !Array.isArray(importData.sessions)) {
+      throw new Error('Invalid import data format');
+    }
+    
+    // Import each session
+    for (const session of importData.sessions) {
+      await db.saveSession(session);
+    }
+  } catch (error) {
+    throw new Error('Failed to import sessions: ' + (error as Error).message);
   }
+}
+
+export function downloadSessionsAsFile(): void {
+  exportSessions().then(jsonData => {
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chat-sessions-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
 }

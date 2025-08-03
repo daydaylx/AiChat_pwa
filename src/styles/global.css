@@ -1,99 +1,194 @@
-/* CSS Reset */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* Custom Font (Inter) – falls importiert */
 @import url('https://fonts.googleapis.com/css?family=Inter:400,500,700&display=swap');
 
 /* Grund-Setup */
-html, body {
+:root {
+  --color-bg: #181A1B;
+  --color-fg: #F1F1F1;
+  --color-accent: #38BDF8;
+  --color-danger: #EF4444;
+  --color-border: #222325;
+  --radius: 18px;
+  --shadow: 0 2px 24px 0 rgba(0,0,0,0.14);
+  --font-main: 'Inter', system-ui, Arial, sans-serif;
+  --font-size-base: 17px;
+}
+
+html,
+body {
   height: 100%;
-  background: var(--color-bg);
-  color: var(--color-text);
+  margin: 0;
+  padding: 0;
   font-family: var(--font-main);
-  font-size: 17px;
-  line-height: 1.6;
-  letter-spacing: 0.01em;
-  transition: background var(--transition-main), color var(--transition-main);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-size: var(--font-size-base);
+  -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  min-height: 100vh;
-  background: var(--color-bg);
-  color: var(--color-text);
+  min-height: 100dvh;
+  overflow-x: hidden;
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--color-accent);
   text-decoration: none;
-  transition: color var(--transition-main);
+  transition: color 0.2s;
 }
 a:hover {
-  color: var(--color-accent);
   text-decoration: underline;
+  color: #fff;
 }
 
-input, textarea, button, select {
-  font-family: inherit;
-  font-size: 1em;
+input,
+textarea,
+button,
+select {
+  font-family: var(--font-main);
+  font-size: inherit;
+  color: var(--color-fg);
+  background: #202224;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius);
   outline: none;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-secondary);
-  color: var(--color-text);
-  transition: border-color var(--transition-main), box-shadow var(--transition-main);
+  padding: 0.7em 1em;
+  margin: 0;
+  transition: border 0.2s, box-shadow 0.2s;
 }
-
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px var(--color-accent);
+  box-shadow: 0 0 0 2px #38bdf84d;
 }
-
 button {
-  cursor: pointer;
-  border: none;
-  background: var(--color-primary);
+  background: var(--color-accent);
   color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.7em 1.2em;
   border-radius: var(--radius);
-  padding: 0.5em 1.2em;
-  box-shadow: var(--shadow-card);
-  font-weight: 600;
-  transition: background var(--transition-main), box-shadow var(--transition-main);
+  box-shadow: var(--shadow);
+  transition: background 0.2s;
 }
-button:hover, button:focus {
-  background: var(--color-accent);
-  box-shadow: var(--shadow-modal);
+button:active {
+  background: #1e7dbb;
 }
-
-::selection {
-  background: var(--color-accent);
-  color: #1e2228;
+button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-img, svg {
-  display: block;
-  max-width: 100%;
+::-webkit-scrollbar {
+  width: 10px;
+  background: #202224;
+}
+::-webkit-scrollbar-thumb {
+  background: #35363b;
+  border-radius: 10px;
 }
 
-#root {
-  min-height: 100vh;
+/* Chat Bubble Styles */
+.chat-bubble {
+  max-width: 88vw;
+  padding: 1em 1.25em;
+  border-radius: 1.4em 1.4em 1.4em 0.5em;
+  box-shadow: var(--shadow);
+  margin: 0.3em 0;
+  background: #23262b;
+  color: #fff;
+  font-size: 1em;
+  word-break: break-word;
+  position: relative;
+  animation: chatFadeIn 0.4s;
+}
+
+.chat-bubble.user {
+  background: #38BDF8;
+  color: #181A1B;
+  align-self: flex-end;
+  border-radius: 1.4em 1.4em 0.5em 1.4em;
+}
+
+@keyframes chatFadeIn {
+  0% { opacity: 0; transform: translateY(12px) scale(0.97);}
+  100% { opacity: 1; transform: none;}
+}
+
+/* Typing Indicator */
+.typing-indicator {
   display: flex;
-  flex-direction: column;
-  background: var(--color-bg);
+  align-items: center;
+  gap: 0.3em;
+  color: var(--color-accent);
+  font-size: 1.05em;
+  animation: typingBlink 1.2s infinite steps(1, end);
+}
+@keyframes typingBlink {
+  0%, 60%, 100% { opacity: 1; }
+  80% { opacity: 0.3; }
 }
 
-/* Responsive & Touch */
-@media (max-width: 640px) {
-  html {
-    font-size: 15px;
+/* Modal / Overlay */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(16,16,18,0.55);
+  z-index: 50;
+}
+.modal-content {
+  background: #181A1B;
+  border-radius: var(--radius);
+  padding: 2em;
+  max-width: 95vw;
+  max-height: 94vh;
+  box-shadow: var(--shadow);
+  margin: 2em auto;
+}
+
+/* Responsive + Touch */
+@media (max-width: 600px) {
+  :root {
+    --font-size-base: 16px;
+    --radius: 15px;
+  }
+  .modal-content {
+    padding: 1.2em;
+  }
+  .chat-bubble,
+  .chat-bubble.user {
+    font-size: 0.98em;
+    padding: 0.8em 1em;
+  }
+}
+
+/* Light-Mode */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #f6f7fa;
+    --color-fg: #1a1a1a;
+    --color-accent: #0ea5e9;
+    --color-danger: #db3232;
+    --color-border: #ddd;
   }
   body {
-    padding-bottom: 48px;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+  .chat-bubble {
+    background: #e6f6ff;
+    color: #222;
+  }
+  .chat-bubble.user {
+    background: #0ea5e9;
+    color: #fff;
+  }
+  .modal-content {
+    background: #fff;
+    color: #222;
   }
 }
+
+

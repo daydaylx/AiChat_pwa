@@ -1,9 +1,14 @@
-import { useContext } from 'react';
-import { SettingsContext } from './contexts/SettingsContext';
-import { SessionContext } from './contexts/SessionContext';
-import { Layout } from './components/Layout/Layout';
+import React from 'react';
+import Layout from './components/Layout/Layout';  // Changed: default import
+import { SessionProvider } from './contexts/SessionContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 
-export function App() {
-  // (Später für Routing, Theme-Reset etc. – jetzt reicht blank)
-  return <Layout />;
+export default function App() {  // Changed: default export
+  return (
+    <SettingsProvider>
+      <SessionProvider>
+        <Layout />
+      </SessionProvider>
+    </SettingsProvider>
+  );
 }

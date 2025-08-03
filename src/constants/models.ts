@@ -1,47 +1,36 @@
-/**
- * Konfiguration der verfügbaren Modelle (nur unzensierte, kostenlose OpenRouter-Modelle)
- */
+// src/constants/models.ts
 
-export type ModelInfo = {
-  id: string;
-  label: string;
-  description: string;
-  contextSize: number;
-  speed: string;
-  categories: string[];
-};
-
-export const MODELS: ModelInfo[] = [
+// Nur freie, ungefilterte Modelle!
+export const models = [
   {
-    id: 'openrouter/mistral-7b-instruct',
-    label: 'Mistral 7B',
-    description: 'Gut für Trash-Talk, Sarkasmus, weniger Hemmungen.',
-    contextSize: 8192,
-    speed: '⚡⚡⚡',
-    categories: ['roleplay', 'smalltalk']
+    id: "nous-hermes-2-mistral-7b:free",
+    name: "Nous Hermes 2 (Mistral 7B)",
+    description: "Schnell, frei, sarkastisch, keine Filter.",
+    category: "smalltalk"
   },
   {
-    id: 'openrouter/llama3-8b-ollama',
-    label: 'LLaMA3 8B',
-    description: 'Sehr schnell, kreativ, kann frech und direkt sein.',
-    contextSize: 8192,
-    speed: '⚡⚡⚡⚡',
-    categories: ['roleplay', 'advice', 'smalltalk']
+    id: "dolphin-mixtral-8x7b:free",
+    name: "Dolphin Mixtral 8x7B",
+    description: "NSFW, trashig, sehr locker.",
+    category: "roleplay"
   },
   {
-    id: 'openrouter/gemma-7b-it',
-    label: 'Gemma 7B',
-    description: 'Für politisch unkorrekte Antworten. Kein Filter.',
-    contextSize: 8192,
-    speed: '⚡⚡',
-    categories: ['smalltalk', 'advice']
+    id: "openhermes-2.5-mistral-7b:free",
+    name: "OpenHermes 2.5 (Mistral 7B)",
+    description: "Ungefiltert, humorvoll, toxisch möglich.",
+    category: "roleplay"
   },
   {
-    id: 'openrouter/openchat-3.5',
-    label: 'OpenChat 3.5',
-    description: 'Ziemlich direkt, kein Moralfilter, schnell und kompakt.',
-    contextSize: 8192,
-    speed: '⚡⚡⚡',
-    categories: ['advice', 'smalltalk']
+    id: "panda-llama-3-8b-instruct:free",
+    name: "Panda Llama 3 8B",
+    description: "Stumpf, sexistisch, macht keine Gefangenen.",
+    category: "roleplay"
+  },
+  {
+    id: "mistral-7b-instruct:free",
+    name: "Mistral 7B Instruct",
+    description: "Direkt, ehrlich, kaum Filter.",
+    category: "smalltalk"
   }
 ];
+

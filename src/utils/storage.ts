@@ -1,28 +1,24 @@
-/**
- * Einfache Wrapper-Funktionen für lokalen Speicher.
- */
-
-export function getLocal<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) as T : fallback;
-  } catch {
-    return fallback;
-  }
+export function getStoredSessions(): any[] {
+  const stored = localStorage.getItem('chat-sessions');
+  return stored ? JSON.parse(stored) : [];
 }
 
-export function setLocal<T>(key: string, value: T): void {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Speichern fehlgeschlagen (z. B. bei vollem Speicher) – ignorieren
-  }
+export function storeSessions(sessions: any[]): void {
+  localStorage.setItem('chat-sessions', JSON.stringify(sessions));
 }
 
-export function removeLocal(key: string): void {
-  try {
-    localStorage.removeItem(key);
-  } catch {
-    // Entfernen fehlgeschlagen – ignorieren
-  }
+export function clearStoredSessions(): void {
+  localStorage.removeItem('chat-sessions');
+}
+
+export function loadApiKey(): string | null {
+  return localStorage.getItem('openai-api-key');
+}
+
+export function saveApiKey(key: string): void {
+  localStorage.setItem('openai-api-key', key);
+}
+
+export function clearApiKey(): void {
+  localStorage.removeItem('openai-api-key');
 }
