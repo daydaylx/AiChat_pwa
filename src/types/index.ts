@@ -1,4 +1,5 @@
 export interface Message {
+  id: string; // JEDES Message-Objekt braucht jetzt eine id!
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
@@ -6,8 +7,8 @@ export interface Message {
 export interface ChatSession {
   id: string;
   title: string;
-  createdAt: number;   // UNIX timestamp (ms)
-  updatedAt: number;   // UNIX timestamp (ms)
+  createdAt: number;
+  updatedAt: number;
   model: string;
   messages: Message[];
   avatar?: string;

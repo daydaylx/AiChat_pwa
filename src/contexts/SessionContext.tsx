@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { AVAILABLE_MODELS } from '../utils/models';
-import { uuidv4 } from '../utils/uuid';
-import { ChatSession, Message } from '../types';
+import { ChatSession } from '../types';
 import * as db from '../utils/db';
 
 interface SessionContextType {

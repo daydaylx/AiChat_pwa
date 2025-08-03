@@ -1,14 +1,20 @@
 import React from 'react';
-import Layout from './components/Layout/Layout';  // Changed: default import
-import { SessionProvider } from './contexts/SessionContext';
-import { SettingsProvider } from './contexts/SettingsContext';
+import Layout from './components/Layout/Layout';
+import ChatView from './components/Chat/ChatView';
+import { Message } from './types';
 
-export default function App() {  // Changed: default export
+const messages: Message[] = []; // Typisiert, jetzt beschwert sich TS nicht mehr
+
+// Dummy-Funktion, TS-nervfrei
+const handleFeedback = (_id: string, _feedback: string) => {};
+
+const App: React.FC = () => {
   return (
-    <SettingsProvider>
-      <SessionProvider>
-        <Layout />
-      </SessionProvider>
-    </SettingsProvider>
+    <Layout>
+      <ChatView messages={messages} onFeedback={handleFeedback} />
+      {/* weitere Komponenten */}
+    </Layout>
   );
-}
+};
+
+export default App;

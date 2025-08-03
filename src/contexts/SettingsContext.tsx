@@ -1,50 +1,29 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import { getTheme, setTheme } from "../utils/theme";
-import { loadApiKey, saveApiKey } from "../utils/storage";
-import { getDefaultModel } from "../utils/models";
+import { createContext, useContext, useState, ReactNode } from "react";
+import { AVAILABLE_MODELS } from "../utils/models";
 
-interface SettingsContextProps {
-  apiKey: string;
-  setApiKey: (key: string) => void;
-  model: string;
-  setModel: (model: string) => void;
-  theme: string;
-  setThemeMode: (theme: string) => void;
+export function getDefaultModel() {
+  return AVAILABLE_MODELS[0]?.id || "";
 }
 
-const SettingsContext = createContext<SettingsContextProps | undefined>(undefined);
+interface SettingsContextType {
+  model: string;
+  setModel: (model: string) => void;
+}
 
-export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [apiKey, setApiKeyState] = useState<string>(() => loadApiKey() || "");
-  const [model, setModel] = useState<string>(() => getDefaultModel());
-  const [theme, setThemeMode] = useState<string>(() => getTheme());
+const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-  useEffect(() => {
-    saveApiKey(apiKey);
-  }, [apiKey]);
-
-  useEffect(() => {
-    setTheme(theme);
-  }, [theme]);
+export const SettingsProvider = ({ children }: { children: ReactNode }) => {
+  const [model, setModel] = useState(getDefaultModel());
 
   return (
-    <SettingsContext.Provider
-      value={{
-        apiKey,
-        setApiKey: setApiKeyState,
-        model,
-        setModel,
-        theme,
-        setThemeMode,
-      }}
-    >
+    <SettingsContext.Provider value={{ model, setModel }}>
       {children}
     </SettingsContext.Provider>
   );
 };
 
-export function useSettings() {
+export function useSettingsContext() {
   const ctx = useContext(SettingsContext);
-  if (!ctx) throw new Error("useSettings must be used within SettingsProvider");
+  if (!ctx) throw new Error("useSettingsContext must be used within a SettingsProvider");
   return ctx;
 }
