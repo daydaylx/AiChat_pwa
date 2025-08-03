@@ -2,6 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: '/ki-chat-pwa-nofilter/', // <- GENAU SO! (dein Repo-Name)
+  base: '/AiChat_pwa/', // <- Muss exakt wie dein Repo heißen, MIT Slash am Ende!
   plugins: [react()],
 });
