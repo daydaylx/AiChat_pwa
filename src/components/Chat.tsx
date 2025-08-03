@@ -102,10 +102,13 @@ return (
 <div className="chat-container" ref={chatContainerRef}>
 <div className="messages">
 {messages.length === 0 && (
-<div style={{ textAlign: 'center', margin: '40px 0', opacity: 0.7 }}>
+<div className="empty-chat">
+<div className="empty-chat-icon">💬</div>
+<div className="empty-chat-text">
 {isConfigured
 ? 'Keine Nachrichten. Starte eine Unterhaltung!'
 : 'Bitte konfiguriere zuerst deine API-Einstellungen ⚙️'}
+</div>
 </div>
 )}
       {messages.map((message) => (
