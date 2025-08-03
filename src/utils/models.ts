@@ -72,4 +72,6 @@ description: "Verbinde mit lokal laufenden Ollama-Modellen",
 isFree: true
 }
 ];
+// Alias für bestehenden Code, der AVAILABLE_MODELS verwendet
+export const AVAILABLE_MODELS = MODELS;
 export const DEFAULT_MODEL = "openrouter/nous-hermes-2-mixtral-8x7b-dpo";
