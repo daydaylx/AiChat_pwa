@@ -1,0 +1,24 @@
+{
+  "name": "KI Chat PWA (NoFilter)",
+  "short_name": "KI Chat",
+  "description": "Eine progressive Web-App für private, unzensierte KI-Chats mit OpenRouter.",
+  "theme_color": "#1a1a1a",
+  "background_color": "#1a1a1a",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/icons/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

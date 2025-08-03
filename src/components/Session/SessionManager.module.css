@@ -1,0 +1,86 @@
+.sessionManager {
+  width: 300px;
+  flex-shrink: 0;
+  background-color: var(--surface-color);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  transition: transform 0.3s;
+}
+
+.header {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.header h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.newChatButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--primary-color);
+  color: var(--primary-contrast-color);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.newChatButton:hover {
+  background-color: color-mix(in srgb, var(--primary-color) 90%, black);
+}
+
+.sessionList {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+.noSessions {
+  color: var(--text-secondary-color);
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+  .sessionManager {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    border-right: 1px solid var(--border-color);
+  }
+
+  .sessionManager.open {
+    transform: translateX(0);
+    box-shadow: 4px 0px 15px rgba(0,0,0,0.2);
+  }
+  
+  .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--modal-backdrop);
+      z-index: 999;
+      display: block;
+  }
+}

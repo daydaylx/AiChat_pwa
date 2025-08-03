@@ -1,0 +1,32 @@
+.modelSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.modelInfo {
+  background-color: var(--surface-color);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+.description {
+  color: var(--text-color);
+  margin-bottom: 0.75rem;
+}
+
+.details {
+  color: var(--text-secondary-color);
+  font-size: 0.85rem;
+}

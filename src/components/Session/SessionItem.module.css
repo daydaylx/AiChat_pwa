@@ -1,0 +1,44 @@
+.sessionItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-color);
+  transition: background-color 0.2s;
+  border-radius: 8px;
+  margin: 0 0.5rem;
+  width: calc(100% - 1rem);
+}
+
+.sessionItem:hover {
+  background-color: var(--surface-hover-color);
+}
+
+.sessionItem.active {
+  background-color: var(--primary-color);
+  color: var(--primary-contrast-color);
+  font-weight: 500;
+}
+
+.avatar {
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+  width: 32px;
+  text-align: center;
+}
+
+.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+.sessionItem.active .avatar {
+  filter: brightness(0) invert(1);
+}
