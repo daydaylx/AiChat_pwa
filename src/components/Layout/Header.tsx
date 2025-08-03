@@ -1,39 +1,28 @@
-import { useContext, useState } from 'react';
-import { SessionContext } from '../../contexts/SessionContext';
-import { SettingsModal } from '../Settings/SettingsModal';
-import { MenuIcon, SettingsIcon } from '../../assets/icons';
-import styles from './Header.module.css';
+import React from "react";
+import styles from "./Header.module.css";
+import { useTranslation } from "react-i18next";
 
 interface HeaderProps {
-  onMenuClick: () => void;
+  onOpenSettings: () => void;
 }
 
-export const Header = ({ onMenuClick }: HeaderProps) => {
-  const sessionCtx = useContext(SessionContext);
-  const [isSettingsOpen, setSettingsOpen] = useState(false);
-
-  const activeSessionTitle = sessionCtx?.activeSession?.title || 'PersonaChat';
+const Header: React.FC<HeaderProps> = ({ onOpenSettings }) => {
+  const { t } = useTranslation();
 
   return (
-    <>
-      <header className={styles.header}>
-        <button
-          className={styles.iconButton}
-          onClick={onMenuClick}
-          aria-label="Öffne Chat-Menü"
-        >
-          <MenuIcon />
-        </button>
-        <h1 className={styles.title}>{activeSessionTitle}</h1>
-        <button
-          className={styles.iconButton}
-          onClick={() => setSettingsOpen(true)}
-          aria-label="Öffne Einstellungen"
-        >
-          <SettingsIcon />
-        </button>
-      </header>
-      {isSettingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
-    </>
+    <header className={styles.header}>
+      <div className={styles.logoBox}>
+        <span className={styles.logo}>🤖</span>
+        <span className={styles.title}>{t("app_title")}</span>
+      </div>
+      <button className={styles.settingsButton} onClick={onOpenSettings} title={t("settings_title")}>
+        <svg width="24" height="24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+          <path d="M12 8v4l3 3" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
+      </button>
+    </header>
   );
 };
+
+export default Header;

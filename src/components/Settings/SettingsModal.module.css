@@ -1,112 +1,113 @@
-.settingsContent {
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13,16,28,0.82);
+  z-index: 100;
   display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-  padding-top: 1rem;
+  align-items: center;
+  justify-content: center;
 }
 
-.settingGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.modal {
+  min-width: 330px;
+  max-width: 98vw;
+  background: var(--primary-900,#222235);
+  color: #e0f2fb;
+  border-radius: 1.4em;
+  box-shadow: 0 4px 48px #00153066;
+  padding: 1.4em 2.3em 1em 2.3em;
+  position: relative;
+  animation: pop-in .16s cubic-bezier(.55,1.7,.35,1.1);
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.93) translateY(30px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+h2 {
+  font-size: 1.21em;
+  margin-bottom: 0.6em;
+  font-weight: 700;
 }
 
 .label {
+  display: block;
+  font-size: 1.03em;
+  margin-bottom: 1.0em;
   font-weight: 500;
-  color: var(--text-color);
 }
 
-.input,
-.select {
+.input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  font-size: 1rem;
-}
-
-.input:focus,
-.select:focus {
+  background: #18212c;
+  color: #d9fbff;
+  border: 1.5px solid #3c5376;
+  border-radius: 0.7em;
+  margin: 0.23em 0 0.13em 0;
+  font-size: 1.08em;
+  padding: 0.54em 0.86em;
+  font-family: inherit;
   outline: none;
-  border-color: var(--primary-color);
+  box-shadow: 0 0.5px 2px #01243e11;
+  transition: border 0.12s, background 0.15s;
 }
 
-.description {
-  font-size: 0.85rem;
-  color: var(--text-secondary-color);
+.input:focus {
+  border: 1.7px solid #49e2fe;
+  background: #18344c;
 }
 
-.actions {
+.desc {
+  color: #6aa0c1;
+  font-size: 0.96em;
+  font-weight: 400;
+}
+
+.footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1rem;
+  align-items: center;
+  gap: 0.8em;
+  margin-top: 1.8em;
 }
 
-.saveButton {
-  padding: 0.75rem 1.5rem;
-  background-color: var(--primary-color);
-  color: var(--primary-contrast-color);
+.saveBtn {
+  background: linear-gradient(90deg,#27c7ff 60%,#048ee7 100%);
+  color: #15212c;
+  font-weight: 600;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 0.61em 1.34em;
+  border-radius: 1.1em;
+  font-size: 1.08em;
+  box-shadow: 0 2px 12px #47e0ff2c;
   cursor: pointer;
+  transition: background 0.11s, color 0.11s, box-shadow 0.13s;
 }
 
-.buttonGroup {
-  display: flex;
-  gap: 1rem;
+.saveBtn:hover,
+.saveBtn:focus {
+  background: linear-gradient(90deg,#18e6d9 40%,#08b4d4 100%);
+  color: #041c2b;
+  outline: none;
+  box-shadow: 0 2px 16px #48ebfd3c;
 }
 
-.actionButton {
-  flex-grow: 1;
-  padding: 0.75rem;
-  background-color: var(--surface-hover-color);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+.closeBtn {
+  background: none;
+  border: none;
+  color: #6eb6ff;
+  font-size: 1.2em;
+  margin-left: 0.3em;
+  padding: 0.2em 0.6em;
+  border-radius: 0.7em;
   cursor: pointer;
+  transition: background 0.12s, color 0.13s;
 }
 
-/* Toggle Switch für den Datenschutzmodus */
-.toggleSwitch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 28px;
-}
-.toggleSwitch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-.toggleSwitch label {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--surface-hover-color);
-    transition: .4s;
-    border-radius: 28px;
-}
-.toggleSwitch label:before {
-    position: absolute;
-    content: "";
-    height: 20px;
-    width: 20px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-.toggleSwitch input:checked + label {
-    background-color: var(--primary-color);
-}
-.toggleSwitch input:checked + label:before {
-    transform: translateX(22px);
+.closeBtn:hover,
+.closeBtn:focus {
+  background: #0c223a;
+  color: #fff;
+  outline: none;
 }

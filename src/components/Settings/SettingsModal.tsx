@@ -1,131 +1,84 @@
-import { useContext, useState, useRef, ChangeEvent } from 'react';
-import { useTranslation } from 'react-i18next';
-import { SettingsContext } from '../../contexts/SettingsContext';
-import { SessionContext } from '../../contexts/SessionContext';
-import { Modal } from '../Common/Modal';
-import { ModelSelector } from './ModelSelector';
-import styles from './SettingsModal.module.css';
+import React, { useState, useEffect } from "react";
+import styles from "./SettingsModal.module.css";
+import ModelSelector from "./ModelSelector";
+import { useTranslation } from "react-i18next";
 
 interface SettingsModalProps {
+  open: boolean;
   onClose: () => void;
+  apiKey: string;
+  onApiKeyChange: (key: string) => void;
+  selectedModel: string;
+  onModelChange: (model: string) => void;
+  theme: string;
+  onThemeChange: (theme: string) => void;
 }
 
-export const SettingsModal = ({ onClose }: SettingsModalProps) => {
+const SettingsModal: React.FC<SettingsModalProps> = ({
+  open,
+  onClose,
+  apiKey,
+  onApiKeyChange,
+  selectedModel,
+  onModelChange,
+  theme,
+  onThemeChange,
+}) => {
   const { t } = useTranslation();
-  const settingsCtx = useContext(SettingsContext);
-  const sessionCtx = useContext(SessionContext);
-  if (!settingsCtx || !sessionCtx) return null;
+  const [key, setKey] = useState(apiKey);
 
-  const { apiKey, setApiKey, theme, setTheme, isPrivacyMode, setIsPrivacyMode } = settingsCtx;
-  const { exportAllSessions, importSessions } = sessionCtx;
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => setKey(apiKey), [apiKey, open]);
 
-  const [currentApiKey, setCurrentApiKey] = useState(apiKey);
+  if (!open) return null;
 
   const handleSave = () => {
-    setApiKey(currentApiKey);
+    onApiKeyChange(key.trim());
     onClose();
   };
 
-  const handleExport = () => {
-    const jsonString = exportAllSessions();
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `personachat_backup_${new Date().toISOString()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImportClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileImport = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const content = e.target?.result as string;
-        await importSessions(content);
-        alert(t('import_success'));
-      } catch (error) {
-        alert(t('import_error'));
-      }
-    };
-    reader.readAsText(file);
-  };
-
   return (
-    <Modal title={t('settings_title')} onClose={onClose}>
-      <div className={styles.settingsContent}>
-        <div className={styles.settingGroup}>
-          <label htmlFor="api-key" className={styles.label}>{t('api_key_label')}</label>
+    <div className={styles.overlay}>
+      <div className={styles.modal}>
+        <h2>{t("settings_title")}</h2>
+        <label className={styles.label}>
+          {t("api_key_label")}
           <input
-            id="api-key"
-            type="password"
-            value={currentApiKey}
-            onChange={(e) => setCurrentApiKey(e.target.value)}
-            placeholder={t('api_key_placeholder')}
             className={styles.input}
+            type="password"
+            value={key}
+            onChange={e => setKey(e.target.value)}
+            placeholder={t("api_key_placeholder")}
+            autoComplete="off"
+            spellCheck={false}
+            autoFocus
           />
-          <p className={styles.description}>{t('api_key_description')}</p>
-        </div>
+          <small className={styles.desc}>{t("api_key_description")}</small>
+        </label>
 
-        <div className={styles.settingGroup}>
-          <label className={styles.label}>{t('model_selection_label')}</label>
-          <ModelSelector />
-        </div>
+        <ModelSelector value={selectedModel} onChange={onModelChange} />
 
-        <div className={styles.settingGroup}>
-          <label htmlFor="theme" className={styles.label}>{t('theme_label')}</label>
-          <select 
-            id="theme" 
-            value={theme} 
-            onChange={(e) => setTheme(e.target.value as any)} 
-            className={styles.select}
+        <label className={styles.label}>
+          {t("theme_label")}
+          <select
+            className={styles.input}
+            value={theme}
+            onChange={e => onThemeChange(e.target.value)}
           >
-            <option value="system">{t('theme_system')}</option>
-            <option value="light">{t('theme_light')}</option>
-            <option value="dark">{t('theme_dark')}</option>
+            <option value="system">{t("theme_system")}</option>
+            <option value="dark">{t("theme_dark")}</option>
+            <option value="light">{t("theme_light")}</option>
           </select>
-        </div>
-        
-        <div className={styles.settingGroup}>
-          <label className={styles.label}>{t('privacy_mode_label')}</label>
-          <div className={styles.toggleSwitch}>
-            <input 
-              type="checkbox" 
-              id="privacy-mode" 
-              checked={isPrivacyMode} 
-              onChange={(e) => setIsPrivacyMode(e.target.checked)} 
-            />
-            <label htmlFor="privacy-mode"></label>
-          </div>
-        </div>
+        </label>
 
-        <div className={styles.settingGroup}>
-          <h3 className={styles.label}>{t('export_import_title')}</h3>
-          <div className={styles.buttonGroup}>
-            <button onClick={handleExport} className={styles.actionButton}>{t('export_all_chats')}</button>
-            <button onClick={handleImportClick} className={styles.actionButton}>{t('import_chats')}</button>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              style={{ display: 'none' }} 
-              accept=".json" 
-              onChange={handleFileImport}
-            />
-          </div>
-        </div>
-
-        <div className={styles.actions}>
-          <button onClick={handleSave} className={styles.saveButton}>{t('save_button')}</button>
+        <div className={styles.footer}>
+          <button className={styles.saveBtn} onClick={handleSave}>
+            {t("save_button")}
+          </button>
+          <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 };
+
+export default SettingsModal;

@@ -1,50 +1,35 @@
-import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import { SettingsContext, AVAILABLE_MODELS } from '../../contexts/SettingsContext';
-import { AiModel } from '../../types';
-import styles from './ModelSelector.module.css';
+import React from "react";
+import styles from "./ModelSelector.module.css";
+import { useTranslation } from "react-i18next";
+import { getAvailableModels, getModelInfo } from "../../utils/models";
 
-export const ModelSelector = () => {
+interface Props {
+  value: string;
+  onChange: (modelId: string) => void;
+}
+
+const ModelSelector: React.FC<Props> = ({ value, onChange }) => {
   const { t } = useTranslation();
-  const settingsCtx = useContext(SettingsContext);
-  if (!settingsCtx) return null;
-
-  const { selectedModel, setSelectedModelId } = settingsCtx;
-  
-  // Gruppiere Modelle nach ihrer Kategorie (für optgroups)
-  const groupedModels = AVAILABLE_MODELS.reduce((acc, model) => {
-    const category = t(model.categoryKey);
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(model);
-    return acc;
-  }, {} as Record<string, AiModel[]>);
+  const models = getAvailableModels();
 
   return (
-    <div className={styles.modelSelector}>
-      <select 
-        value={selectedModel.id} 
-        onChange={(e) => setSelectedModelId(e.target.value)}
+    <div className={styles.root}>
+      <label className={styles.label}>{t("model_selection_label")}</label>
+      <select
         className={styles.select}
+        value={value}
+        onChange={e => onChange(e.target.value)}
       >
-        {Object.entries(groupedModels).map(([category, models]) => (
-          <optgroup label={category} key={category}>
-            {models.map(model => (
-              <option key={model.id} value={model.id}>
-                {model.name}
-              </option>
-            ))}
-          </optgroup>
+        {models.map(m => (
+          <option key={m.id} value={m.id}>{m.label}</option>
         ))}
       </select>
-      
-      <div className={styles.modelInfo}>
-        <p className={styles.description}>{t(selectedModel.descriptionKey)}</p>
-        <div className={styles.details}>
-          <span><strong>{t('model_info_context')}:</strong> {(selectedModel.context_length / 1000).toLocaleString()}K Tokens</span>
-        </div>
+      <div className={styles.info}>
+        <strong>{t("model_info_title")}: </strong>
+        {getModelInfo(value, t)}
       </div>
     </div>
   );
 };
+
+export default ModelSelector;

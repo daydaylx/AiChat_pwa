@@ -1,86 +1,47 @@
-.sessionManager {
-  width: 300px;
-  flex-shrink: 0;
-  background-color: var(--surface-color);
-  border-right: 1px solid var(--border-color);
+.managerRoot {
+  width: 320px;
+  max-width: 98vw;
+  min-height: 85vh;
+  background: rgba(28, 24, 36, 0.96);
+  border-radius: 21px;
+  box-shadow: 0 3px 26px #18142944;
+  padding: 24px 16px 24px 22px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  transition: transform 0.3s;
+  gap: 10px;
 }
 
 .header {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
-
-.header h2 {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-.newChatButton {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: var(--primary-color);
-  color: var(--primary-contrast-color);
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
+  font-size: 1.21rem;
+  font-weight: 600;
+  color: #edeaff;
+  margin-bottom: 18px;
+  letter-spacing: .02em;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s;
+  gap: 8px;
 }
 
-.newChatButton:hover {
-  background-color: color-mix(in srgb, var(--primary-color) 90%, black);
-}
-
-.sessionList {
-  flex-grow: 1;
+.sessionsList {
+  flex: 1 1 auto;
   overflow-y: auto;
-  padding: 0.5rem 0;
 }
 
-.noSessions {
-  color: var(--text-secondary-color);
-  text-align: center;
-  padding: 2rem 1rem;
+.newChatBtn {
+  margin-top: 16px;
+  background: linear-gradient(96deg, #fd5d7c 25%, #7be6c5 100%);
+  color: #202232;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 11px;
+  padding: 13px 0;
+  cursor: pointer;
+  box-shadow: 0 1.5px 6px #25252444;
+  transition: background 0.16s;
 }
-
-.overlay {
-    display: none;
-}
-
-@media (max-width: 768px) {
-  .sessionManager {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    z-index: 1000;
-    transform: translateX(-100%);
-    border-right: 1px solid var(--border-color);
-  }
-
-  .sessionManager.open {
-    transform: translateX(0);
-    box-shadow: 4px 0px 15px rgba(0,0,0,0.2);
-  }
-  
-  .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: var(--modal-backdrop);
-      z-index: 999;
-      display: block;
-  }
+.newChatBtn:hover,
+.newChatBtn:focus {
+  background: linear-gradient(96deg, #ff8d98 0%, #b0f9e5 100%);
 }

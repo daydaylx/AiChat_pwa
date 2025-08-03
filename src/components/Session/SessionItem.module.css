@@ -1,44 +1,55 @@
-.sessionItem {
+.itemRoot {
   display: flex;
   align-items: center;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: none;
-  background: none;
-  text-align: left;
+  padding: 12px 22px;
+  border-radius: 13px;
+  background: linear-gradient(96deg, #262b35 60%, #2d233a 100%);
+  margin-bottom: 9px;
+  box-shadow: 0 1.5px 6px #2224, 0 0.5px 1.5px #fbf2;
+  transition: background 0.13s, box-shadow 0.13s;
   cursor: pointer;
-  font-size: 1rem;
-  color: var(--text-color);
-  transition: background-color 0.2s;
-  border-radius: 8px;
-  margin: 0 0.5rem;
-  width: calc(100% - 1rem);
+  border: 1.5px solid #232435;
+  position: relative;
+}
+.itemRoot:hover,
+.itemRoot:focus {
+  background: linear-gradient(99deg, #353a47 60%, #4a2d62 100%);
+  box-shadow: 0 3px 13px #37335555;
+  border-color: #fd5d7c99;
 }
 
-.sessionItem:hover {
-  background-color: var(--surface-hover-color);
-}
-
-.sessionItem.active {
-  background-color: var(--primary-color);
-  color: var(--primary-contrast-color);
+.sessionTitle {
+  flex: 1 1 auto;
+  font-size: 1.13rem;
   font-weight: 500;
-}
-
-.avatar {
-  font-size: 1.25rem;
-  margin-right: 0.75rem;
-  width: 32px;
-  text-align: center;
-}
-
-.title {
+  color: #edeaff;
+  letter-spacing: .01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-grow: 1;
 }
 
-.sessionItem.active .avatar {
-  filter: brightness(0) invert(1);
+.time {
+  margin-left: 12px;
+  color: #b1b7ce;
+  font-size: 0.93rem;
+}
+
+.deleteBtn {
+  margin-left: 14px;
+  color: #fd5d7c;
+  background: none;
+  border: none;
+  font-size: 1.35rem;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0 4px;
+  transition: background 0.15s;
+}
+.deleteBtn:hover {
+  background: #43255050;
+}
+.selected {
+  border: 2.2px solid #fd5d7c;
+  background: linear-gradient(95deg, #36324b 60%, #692963 100%);
 }

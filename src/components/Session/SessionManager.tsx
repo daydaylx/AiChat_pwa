@@ -1,53 +1,38 @@
-import { useContext } from 'react';
-import { SessionContext } from '../../contexts/SessionContext';
-import { SessionItem } from './SessionItem';
-import { useTranslation } from 'react-i18next';
-import { AddIcon } from '../../assets/icons';
-import styles from './SessionManager.module.css';
+import React from "react";
+import styles from "./SessionManager.module.css";
+import SessionItem from "./SessionItem";
+import { useSessionContext } from "../../contexts/SessionContext";
+import { useTranslation } from "react-i18next";
 
-interface SessionManagerProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export const SessionManager = ({ isOpen, onClose }: SessionManagerProps) => {
+const SessionManager: React.FC = () => {
+  const { sessions, activeSessionId, selectSession, createSession, deleteSession } = useSessionContext();
   const { t } = useTranslation();
-  const sessionCtx = useContext(SessionContext);
-  if (!sessionCtx) return null;
-
-  const { sessions, activeSessionId, createNewSession, setActiveSessionId } = sessionCtx;
-  
-  const handleSelectSession = (id: string) => {
-    setActiveSessionId(id);
-    onClose(); // Schließt die Sidebar nach Auswahl auf Mobile
-  };
 
   return (
-    <>
-      <aside className={`${styles.sessionManager} ${isOpen ? styles.open : ''}`}>
-        <div className={styles.header}>
-          <h2>{t('session_manager_title')}</h2>
-          <button onClick={createNewSession} className={styles.newChatButton}>
-            <AddIcon />
-            {t('new_chat_button')}
-          </button>
-        </div>
-        <div className={styles.sessionList}>
-          {sessions.length > 0 ? (
-            sessions.map((session) => (
-              <SessionItem
-                key={session.id}
-                session={session}
-                isActive={session.id === activeSessionId}
-                onSelect={() => handleSelectSession(session.id)}
-              />
-            ))
-          ) : (
-            <p className={styles.noSessions}>{t('default_session_title')}</p>
-          )}
-        </div>
-      </aside>
-      {isOpen && <div className={styles.overlay} onClick={onClose} />}
-    </>
+    <div className={styles.sessionManagerRoot}>
+      <div className={styles.sessionList}>
+        {sessions.length === 0 && (
+          <div style={{ textAlign: "center", opacity: 0.5, marginTop: 12 }}>
+            {t("session_manager_title")}
+            <br />
+            <span style={{ fontSize: "0.93em", color: "#999" }}>{t("new_chat_button")}</span>
+          </div>
+        )}
+        {sessions.map((s) => (
+          <SessionItem
+            key={s.id}
+            session={s}
+            active={s.id === activeSessionId}
+            onSelect={() => selectSession(s.id)}
+            onDelete={() => deleteSession(s.id)}
+          />
+        ))}
+      </div>
+      <button className={styles.newChatButton} onClick={createSession}>
+        ＋ {t("new_chat_button")}
+      </button>
+    </div>
   );
 };
+
+export default SessionManager;

@@ -1,17 +1,15 @@
-export type MessageRole = 'user' | 'assistant';
-
 export interface Message {
   id: string;
-  role: MessageRole;
+  role: "user" | "assistant" | "system";
   content: string;
-  timestamp: number;
+  createdAt: number;
 }
 
 export interface ChatSession {
   id: string;
   title: string;
-  avatar: string;
-  model: string;
-  messages: Message[];
   createdAt: number;
+  updatedAt: number;
+  messages: Message[];
+  model: string;
 }

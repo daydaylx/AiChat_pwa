@@ -1,45 +1,20 @@
-import { useContext, useState } from 'react';
-import { SessionContext } from '../../contexts/SessionContext';
-import { SettingsContext } from '../../contexts/SettingsContext';
-import { Header } from './Header';
-import { SessionManager } from '../Session/SessionManager';
-import { ChatView } from '../Chat/ChatView';
-import styles from './Layout.module.css';
+import React from "react";
+import styles from "./Layout.module.css";
 
-export const Layout = () => {
-  const sessionCtx = useContext(SessionContext);
-  const settingsCtx = useContext(SettingsContext);
-  const [isSessionManagerOpen, setSessionManagerOpen] = useState(false);
+interface LayoutProps {
+  children: React.ReactNode;
+  sidebar?: React.ReactNode;
+  header?: React.ReactNode;
+}
 
-  if (!sessionCtx || !settingsCtx) {
-    return <div>Wird geladen...</div>;
-  }
+const Layout: React.FC<LayoutProps> = ({ header, sidebar, children }) => (
+  <div className={styles.layoutRoot}>
+    {header}
+    <main className={styles.layoutMain}>
+      {sidebar && <aside className={styles.sidebar}>{sidebar}</aside>}
+      <section className={styles.content}>{children}</section>
+    </main>
+  </div>
+);
 
-  const { activeSession, isLoading } = sessionCtx;
-
-  return (
-    <div className={styles.layout}>
-      {/* Sidebar / SessionManager */}
-      <SessionManager 
-        isOpen={isSessionManagerOpen} 
-        onClose={() => setSessionManagerOpen(false)} 
-      />
-
-      <main className={styles.mainContent}>
-        {/* Header */}
-        <Header onMenuClick={() => setSessionManagerOpen(true)} />
-
-        {/* Chat */}
-        {isLoading ? (
-          <div className={styles.centeredMessage}>Lade Chats...</div>
-        ) : activeSession ? (
-          <ChatView key={activeSession.id} session={activeSession} />
-        ) : (
-          <div className={styles.centeredMessage}>
-            Kein Chat ausgewählt. Erstelle einen neuen Chat!
-          </div>
-        )}
-      </main>
-    </div>
-  );
-};
+export default Layout;
