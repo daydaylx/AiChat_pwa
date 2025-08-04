@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#6366f1" />
+    <meta
+      name="description"
+      content="Eine unzensierte KI-Chat Progressive Web App mit anpassbaren System-Prompts"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>AI Chat PWA</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AI Chat" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="AI Chat" />
+    <meta name="msapplication-TileColor" content="#6366f1" />
+    <meta name="msapplication-TileImage" content="%PUBLIC_URL%/logo192.png" />
+    <meta name="msapplication-config" content="%PUBLIC_URL%/browserconfig.xml" />
+    
+    <!-- Prevent caching of service worker -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!-- Sound files -->
+    <audio id="message-sound" preload="none">
+      <source src="%PUBLIC_URL%/message.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Installationsvorschlag für iOS -->
+    <div id="ios-install-prompt" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #f9fafb; padding: 16px; text-align: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+      Füge diese App zum Home-Bildschirm hinzu: Tippe auf <img src="%PUBLIC_URL%/ios-share.svg" alt="Share" style="height: 20px; vertical-align: middle;"> und dann auf "Zum Home-Bildschirm"
+      <button id="close-ios-prompt" style="margin-left: 16px; padding: 4px 8px; border-radius: 4px; background: #e5e7eb; border: none;">Schließen</button>
+    </div>
+    
+    <script>
+      // PWA Install-Vorschlag für iOS
+      if (window.navigator.standalone === false && 
+          window.navigator.userAgent.match(/iPhone|iPad|iPod/) && 
+          !window.localStorage.getItem('ios-install-prompt-dismissed')) {
+          
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(function() {
+            document.getElementById('ios-install-prompt').style.display = 'block';
+          }, 2000);
+          
+          document.getElementById('close-ios-prompt').addEventListener('click', function() {
+            document.getElementById('ios-install-prompt').style.display = 'none';
+            window.localStorage.setItem('ios-install-prompt-dismissed', 'true');
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

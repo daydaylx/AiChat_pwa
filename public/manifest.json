@@ -1,24 +1,55 @@
 {
-  "name": "KI Chat PWA (NoFilter)",
-  "short_name": "KI Chat",
-  "description": "Eine progressive Web-App für private, unzensierte KI-Chats mit OpenRouter.",
-  "theme_color": "#1a1a1a",
-  "background_color": "#1a1a1a",
-  "display": "standalone",
-  "scope": "/",
-  "start_url": "/",
+  "short_name": "AI Chat",
+  "name": "AI Chat PWA",
+  "description": "An unfiltered, uncensored AI chat application with customizable system prompts",
   "icons": [
     {
-      "src": "/icons/app-icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
     },
     {
-      "src": "/icons/app-icon-512.png",
-      "sizes": "512x512",
+      "src": "logo192.png",
       "type": "image/png",
-      "purpose": "any maskable"
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "maskable_icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "New Chat",
+      "short_name": "New Chat",
+      "description": "Start a new chat session",
+      "url": "/?new=true",
+      "icons": [{ "src": "logo192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "type": "image/png",
+      "sizes": "540x720"
+    },
+    {
+      "src": "screenshot2.png",
+      "type": "image/png",
+      "sizes": "540x720"
     }
   ]
 }
